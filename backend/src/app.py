@@ -2,10 +2,12 @@ from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo, ObjectId
 from flask_cors import CORS
 from config import config
+from os import environ
+
 
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = config["MONGO_URI"]
+app.config["MONGO_URI"] = "mongodb://admin:secretpassword@mongo:27017/user_management?authSource=admin"
 
 CORS(app)
 mongo = PyMongo(app)
@@ -65,4 +67,4 @@ def update_user(id: str):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)

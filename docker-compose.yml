@@ -1,20 +1,23 @@
-version: '3.1'
+version: '3.8'
+
 services:
+  # Сервис за MongoDB
   mongo:
-    image: mongo
+    image: mongo:latest
     restart: always
     env_file:
       - .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-    ports:
-      - 27017:27017
     volumes:
       - mongodb_data_container:/data/db
+    networks:
+      - app-network
 
+  # Сервис за Mongo Express (GUI за базата)
   mongo-express:
-    image: mongo-express
+    image: mongo-express:latest
     restart: always
     ports:
       - 8081:8081
@@ -22,6 +25,45 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
       ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/
+    depends_on:
+      - mongo
+    networks:
+      - app-network
 
+  # НАШИОТ BACKEND SERVICE (Flask) 
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_DEBUG=1
+      - MONGO_URI=mongodb://admin:secretpassword@mongo:27017/user_management?authSource=admin
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+    networks:
+      - app-network
+  # НАШИОТ FRONTEND SERVICE (React)
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.nginx  # Смени го ова!
+    restart: always
+    ports:
+      - "3000:80"  # Смени го ова! (3000:80 наместо 3000:3000)
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+# Дефинирање на волумен за податоците на MongoDB за да се запазат податоците и по гасење на контејнерот
 volumes:
   mongodb_data_container:
+
+# Креирање на дефиниран мрежа за подобрена изолација и комуникација помеѓу сервисите
+networks:
+  app-network:
+    driver: bridge
