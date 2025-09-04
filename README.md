@@ -36,3 +36,10 @@ MongoDB can be run with Docker. I also added Mongo Express as support. Create an
 ```
 docker-compose up -d
 ```
+
+### 🐳 Run all services with Docker Compose
+
+After creating your `.env` file (following `.env.example`), you can start all services (frontend, backend, MongoDB) with:
+
+```bash
+docker-compose up --build
