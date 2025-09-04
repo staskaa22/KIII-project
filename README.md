@@ -45,3 +45,4 @@ After creating your `.env` file (following `.env.example`), you can start all se
 docker-compose up --build
 
 Update: testing GitHub Actions workflow
+Update: testing GitHub Actions workflow again
