@@ -14,6 +14,9 @@ mongo = PyMongo(app)
 
 db = mongo.db.users
 
+@app.route("/")
+def root():
+    return "Backend is running!"
 
 @app.route("/users", methods=["GET"])
 def get_users():

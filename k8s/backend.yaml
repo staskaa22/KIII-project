@@ -15,22 +15,9 @@ spec:
     spec:
       containers:
       - name: backend
-        image: <anastasijaangelkoska>/backend:latest
+        image: anastasijaangelkoska/backend:latest
         ports:
         - containerPort: 5000
-        env:
-        - name: FLASK_DEBUG
-          value: "1"
-        - name: MONGO_URI
-          value: mongodb://admin:secretpassword@mongo:27017/user_management?authSource=admin
-        volumeMounts:
-        - name: backend-code
-          mountPath: /app
-      volumes:
-      - name: backend-code
-        hostPath:
-          path: ./backend
-          type: Directory
 ---
 apiVersion: v1
 kind: Service
